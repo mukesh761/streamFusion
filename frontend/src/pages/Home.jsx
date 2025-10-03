@@ -19,18 +19,18 @@ const Home = () => {
     }
     const handleJoinRoom=()=>{
       const data={roomId,password}
-      console.log('joining room ')
+      console.log('joining room ',roomId)
       socket.emit('joinRoom',{data,user:JSON.parse(localStorage.getItem('user'))})
     }
-    const handleRoomCreated=(data)=>{
-      console.log('room created', data)
+    const handleRoomCreated=({data, email})=>{
+      console.log(`room created ${data.roomId} by ${email}`)
       navigate(`confress/${data.roomId}`)
     }
 
     const handleRoomJOined=async ({data,email})=>{
-      console.log('new user Joined room ',data)
+      console.log('new user Joined room ',data,email)
       const offer=await  createOffer()
-      socket.emit('makeCall',{offer,to:email})
+      socket.emit('makeCall',{offer,from:email})
      
       
     }
@@ -38,7 +38,7 @@ const Home = () => {
     const handleIncomingCall=async ({offer})=>{
       const answer=await createAnswer(offer)
       
-      await addAnswer(offer)
+      await addAnswer(answer)
       console.log('the call has setup')
     }
 

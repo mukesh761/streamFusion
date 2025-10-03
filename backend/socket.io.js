@@ -29,6 +29,7 @@ io.on('connection',(socket)=>{
          socketToEmail.set(socket.id,user.email)
         emailToSocket.set(user.email,socket.id)
         console.log('room joined')
+        console.log(io.sockets.adapter)
         socket.to(data.roomId).emit('newUser',{data,email:user.email})
         socket.emit("roomJoined",{data,email:user.email})
        }
@@ -37,10 +38,9 @@ io.on('connection',(socket)=>{
        }
     })
 
-    socket.on('makeCall',({offer,to})=>{
+    socket.on('makeCall',({offer,from})=>{
         console.log('received offer',offer)
-        const socketId=emailToSocket.get(to)
-        socket.to(socketId).emit('IncomingCall',{offer})
+        socket.emit('IncomingCall',{offer})
     })
 })
 
