@@ -31,6 +31,7 @@ const Home = () => {
       console.log('new user Joined room ',data,email)
       const offer=await  createOffer()
       socket.emit('makeCall',{offer,from:email})
+       navigate(`confress/${data.roomId}`)
      
       
     }
@@ -44,15 +45,13 @@ const Home = () => {
 
     useEffect(()=>{
       socket.on('roomCreated',handleRoomCreated)
-      socket.on('newUser',handleRoomJOined)
+      socket.on('roomJoined',handleRoomJOined)
       socket.on('IncomingCall',handleIncomingCall)
-      socket.on('roomJoined',({data,email})=>{
-         navigate(`confress/${data.roomId}`)
-      })
+     
       return()=>{
         
         socket.off('roomCreated',handleRoomCreated)
-        socket.off('newUser',handleRoomJOined)
+        socket.off('roomJoined',handleRoomJOined)
         socket.off('IncomingCall',handleIncomingCall)
       
       }
