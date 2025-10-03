@@ -7,7 +7,10 @@ import Confress from "./pages/Confress";
 import { userContext } from "./context/User.context";
 
 const App=()=>{
-  const {islogin}=useContext(userContext)
+  // const {islogin}=useContext(userContext)
+  // console.log(islogin)
+  const islogin= localStorage.getItem(islogin)
+  console.log(islogin)
   return(
     <Router>
       <Routes>
