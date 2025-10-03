@@ -17,12 +17,12 @@ let corsOptions = {
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 };
 app.use(cors(corsOptions));
-
+const PORT=process.emit.PORT || 3000;
 
 app.get('/', (req, res) => {
     res.send('Server is running');
 });
 app.use("/user",userRoute)
-httpServer.listen(3000, () => {
+httpServer.listen(PORT, () => {
     console.log('Server is running on port 3000');
 })
