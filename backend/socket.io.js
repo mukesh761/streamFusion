@@ -38,9 +38,9 @@ io.on('connection',(socket)=>{
        }
     })
 
-    socket.on('makeCall',({offer,from})=>{
+    socket.on('makeCall',({offer,from,data})=>{
         console.log('received offer',offer)
-        socket.emit('IncomingCall',{offer})
+        socket.to(data.roomId).emit('IncomingCall',{offer,data,from})
     })
 })
 

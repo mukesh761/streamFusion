@@ -30,13 +30,13 @@ const Home = () => {
     const handleRoomJOined=async ({data,email})=>{
       console.log('new user Joined room ',data,email)
       const offer=await  createOffer()
-      socket.emit('makeCall',{offer,from:email})
+      socket.emit('makeCall',{offer,from:email,data})
        navigate(`confress/${data.roomId}`)
      
       
     }
 
-    const handleIncomingCall=async ({offer})=>{
+    const handleIncomingCall=async ({offer,data,from})=>{
       console.log("inside handle incoming call")
       const answer=await createAnswer(offer)
       
