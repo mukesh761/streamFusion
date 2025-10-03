@@ -1,39 +1,43 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo, useCallback } from 'react';
   
-const peerContext=createContext()
+const peerContext = createContext();
 
-const peer=new RTCPeerConnection({
+export const usePeer = () => useContext(peerContext);
+
+const PeerProvider = ({ children }) => {
+    const peer = useMemo(() => new RTCPeerConnection({
         iceServers: [
             {
                 urls: "stun:stun.l.google.com:19302",
             }
         ],
-    });
+    }), []);
 
-	const createOffer=async ()=>{
-		const offer=await peer.createOffer();
-		await peer.setLocalDescription(offer)
-		return offer
-	}
+    const createOffer = useCallback(async () => {
+        const offer = await peer.createOffer();
+        console.log('creating offer');
+        await peer.setLocalDescription(offer);
+        return offer;
+    }, [peer]);
 
-	const createAnswer=async (offer)=>{
-		await peer.setRemoteDescription(offer)
-		const answer=await peer.createAnswer()
-		await peer.setLocalDescription(answer)
-		return answer
-	}
+    const createAnswer = useCallback(async (offer) => {
+        await peer.setRemoteDescription(offer);
+        console.log('creating answer');
+        const answer = await peer.createAnswer();
+        await peer.setLocalDescription(answer);
+        return answer;
+    }, [peer]);
 
-	const addAnswer=async (answer)=>{
-		await peer.setRemoteDescription(answer)
-	}
+    const addAnswer = useCallback(async (answer) => {
+        console.log('setting remote answer');
+        await peer.setRemoteDescription(answer);
+    }, [peer]);
 
-const PeerProvider=({children})=>{
+    return (
+        <peerContext.Provider value={{ peer, createOffer, createAnswer, addAnswer }}>
+            {children}
+        </peerContext.Provider>
+    );
+};
 
-	return(
-		<peerContext.Provider value={{peer,createOffer,createAnswer,addAnswer}}>
-			{children}
-		</peerContext.Provider>
-	)
-}
-
-export {PeerProvider,peerContext}
+export { PeerProvider, peerContext };

@@ -19,35 +19,40 @@ const Home = () => {
     }
     const handleJoinRoom=()=>{
       const data={roomId,password}
+      console.log('joining room ')
       socket.emit('joinRoom',{data,user:JSON.parse(localStorage.getItem('user'))})
     }
     const handleRoomCreated=(data)=>{
+      console.log('room created', data)
       navigate(`confress/${data.roomId}`)
-      console.log('datais ',data)
     }
 
-    const handleRoomJOined=async (data)=>{
-      console.log('room joined',data)
+    const handleRoomJOined=async ({data,email})=>{
+      console.log('new user Joined room ',data)
       const offer=await  createOffer()
-      socket.emit('makeCall',{offer,data})
-      navigate(`confress/${data.roomId}`)
+      socket.emit('makeCall',{offer,to:email})
+     
       
     }
 
-    const handleIncomingCall=async ({offer,data})=>{
+    const handleIncomingCall=async ({offer})=>{
       const answer=await createAnswer(offer)
+      
       await addAnswer(offer)
       console.log('the call has setup')
     }
 
     useEffect(()=>{
       socket.on('roomCreated',handleRoomCreated)
-      socket.on('roomJoined',handleRoomJOined)
+      socket.on('newUser',handleRoomJOined)
       socket.on('IncomingCall',handleIncomingCall)
+      socket.on('roomJoined',({data,email})=>{
+         navigate(`confress/${data.roomId}`)
+      })
       return()=>{
         
         socket.off('roomCreated',handleRoomCreated)
-        socket.off('roomJoined',handleRoomJOined)
+        socket.off('newUser',handleRoomJOined)
         socket.off('IncomingCall',handleIncomingCall)
       
       }

@@ -5,6 +5,7 @@ import { generateToken } from "../utils/generateTokens.js";
 //function to login user
 export const signupUser=async(req,res)=>{
    try {
+    console.log('sign in')
     const {name,email,username,password}=req.body;
     if(!name || !email || !username ||!password){
         return res.json({message:"all fields are required"});

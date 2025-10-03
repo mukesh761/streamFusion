@@ -20,7 +20,7 @@ io.on('connection',(socket)=>{
         emailToSocket.set(user.email,socket.id)
         roomToPassword.set(data.roomId,data.password)
         console.log(socket.id,user.email)
-        socket.emit('roomCreated',(data))
+        socket.emit('roomCreated',({data,email:user.email}))
     })
     socket.on('joinRoom',({data,user})=>{
        const room = io.sockets.adapter.rooms.get(data.roomId);
@@ -29,17 +29,18 @@ io.on('connection',(socket)=>{
          socketToEmail.set(socket.id,user.email)
         emailToSocket.set(user.email,socket.id)
         console.log('room joined')
-        socket.to(data.roomId).emit('newUser',user.email)
-        socket.emit("roomJoined",(data))
+        socket.to(data.roomId).emit('newUser',{data,email:user.email})
+        socket.emit("roomJoined",{data,email:user.email})
        }
        else{
         console.log('room id or password is incorrect')
        }
     })
 
-    socket.on('makeCall',({offer,data})=>{
+    socket.on('makeCall',({offer,to})=>{
         console.log('received offer',offer)
-        socket.emit('IncomingCall',{offer,data})
+        const socketId=emailToSocket.get(to)
+        socket.to(socketId).emit('IncomingCall',{offer})
     })
 })
 
