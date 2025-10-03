@@ -4,6 +4,7 @@ import { peerContext } from '../context/Peer.context';
   const Confress = () =>  {
 	const [localStream, setlocalStream] = useState();
 	const {peer}=useContext(peerContext)
+  console.log(peer)
 	const localStreamRef=useRef()
 	const remoteStreamRef=useRef()
 
@@ -14,6 +15,7 @@ import { peerContext } from '../context/Peer.context';
 		}
 		stream.getTracks().forEach(track=>{
 			peer.addTrack(track,stream)
+      console.log(track)
 		})
 	}
 	
@@ -22,6 +24,7 @@ import { peerContext } from '../context/Peer.context';
   const handleTrack = (event) => {
     const incomingStream = event.streams;
 	console.log(incomingStream)
+  console.log(event)
     if (remoteStreamRef.current) {
       remoteStreamRef.current.srcObject = incomingStream[0];
     }
