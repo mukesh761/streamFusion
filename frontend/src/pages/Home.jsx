@@ -37,6 +37,7 @@ const Home = () => {
     }
 
     const handleIncomingCall=async ({offer})=>{
+      console.log("inside handle incoming call")
       const answer=await createAnswer(offer)
       
       await addAnswer(answer)
