@@ -3,7 +3,7 @@ import {io} from "socket.io-client"
 export const socketContext=createContext()
 
 const SocketProvider=({children})=>{
-    const socket=io("https://streamfusion-g74n.onrender.com")
+    const socket=useMemo(()=>io("https://streamfusion-g74n.onrender.com"),[])
     useEffect(()=>{
         socket.emit('connection')
        

@@ -7,7 +7,7 @@ import { SocketProvider } from './context/Socket.context.jsx'
 import { PeerProvider } from './context/Peer.context.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  
     <UserProvider>
       <SocketProvider>
         <PeerProvider>
@@ -16,5 +16,5 @@ createRoot(document.getElementById('root')).render(
         </PeerProvider>
       </SocketProvider>
     </UserProvider>
-  </StrictMode>
+ 
 )

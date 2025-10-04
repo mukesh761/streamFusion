@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useMemo, useCallback } from 'react';
+import { useEffect } from 'react';
   
 const peerContext = createContext();
 
@@ -29,9 +30,19 @@ const PeerProvider = ({ children }) => {
     }, [peer]);
 
     const addAnswer = useCallback(async (answer) => {
-        console.log('setting remote answer');
-        await peer.setRemoteDescription(answer);
-    }, [peer]);
+  if (!peer) return;
+  
+  // avoid setting twice
+  if (peer.signalingState !== "have-local-offer") {
+    console.warn("Not ready to accept remote answer. Current state:", peer.signalingState);
+    return;
+  }
+
+  console.log('setting remote answer');
+  await peer.setRemoteDescription(answer);
+}, [peer]);
+
+
 
     return (
         <peerContext.Provider value={{ peer, createOffer, createAnswer, addAnswer }}>

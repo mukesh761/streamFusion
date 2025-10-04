@@ -29,31 +29,22 @@ const Home = () => {
 
     const handleRoomJOined=async ({data,email})=>{
       console.log('new user Joined room ',data,email)
-      const offer=await  createOffer()
-      socket.emit('makeCall',{offer,from:email,data})
        navigate(`confress/${data.roomId}`)
      
       
     }
-
-    const handleIncomingCall=async ({offer,data,from})=>{
-      console.log("inside handle incoming call")
-      const answer=await createAnswer(offer)
-      
-      await addAnswer(answer)
-      console.log('the call has setup')
-    }
+    
 
     useEffect(()=>{
       socket.on('roomCreated',handleRoomCreated)
       socket.on('roomJoined',handleRoomJOined)
-      socket.on('IncomingCall',handleIncomingCall)
+    
      
       return()=>{
         
         socket.off('roomCreated',handleRoomCreated)
         socket.off('roomJoined',handleRoomJOined)
-        socket.off('IncomingCall',handleIncomingCall)
+        
       
       }
     },[socket])
