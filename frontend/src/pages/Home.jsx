@@ -1,15 +1,45 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import { socketContext} from '../context/Socket.context'
+import { useEffect } from 'react'
+import {useNavigate} from 'react-router-dom'
+import { useCallback } from 'react'
 
 const Home = () => {
-    const [roomId, setroomId] = useState(null)
-    const [password, setpassword] = useState(null)
+    const [roomId, setroomId] = useState('')
+    const [password, setpassword] = useState('')
+    const {socket}=useContext(socketContext)
+    const navigate=useNavigate()
 
-    const handleJoinRoom=()=>{
-
+    const handleCreateRoom=(e)=>{
+      e.preventDefault()
+      const data={roomId,password}
+      socket.emit('createRoom',{data,user:JSON.parse(localStorage.getItem('user'))})
+      
     }
-    const handleCreateRoom=()=>{
-
+    const handleJoinRoom=(e)=>{
+      e.preventDefault()
+      const data={roomId,password}
+      socket.emit('joinRoom',{data,user:JSON.parse(localStorage.getItem('user'))})
     }
+
+    const handleRoomCreated=useCallback(({data,email})=>{
+      console.log('joining room ',data.roomId);
+      navigate(`confress/${data.roomId}`)
+    },[])
+
+    const handleRoomJoined=useCallback(({data,email})=>{
+      console.log('joined room ',data.roomId,email)
+      navigate(`confress/${data.roomId}`)
+    })
+
+    useEffect(()=>{
+      socket.on('roomCreated',handleRoomCreated)
+      socket.on('roomJoined',handleRoomJoined)
+      return (()=>{
+        socket.off('roomCreated',handleRoomCreated)
+        socket.off('roomJoined',handleRoomJoined)
+      })
+    },[socket])
   return (
     <div className='flex items-center justify-center h-screen w-screen flex-col gap-2'>
         <input type="text"
