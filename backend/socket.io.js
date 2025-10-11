@@ -40,8 +40,14 @@ io.on('connection', (socket) => {
             socket.to(data.roomId).emit('newUser',{email:user.email})
         }
     })
-    socket.on('makeCall',()=>{
-        
+    socket.on('handleOffer',({offer})=>{
+        const socketId=emailToSocket.get(roomJoiner)
+        console.log({socketId})
+        socket.to(socketId).emit('incomingCall',{offer})
+    })
+    socket.on('handleAnswer',({answer})=>{
+        const socketId= emailToSocket.get(roomCreator)
+        socket.to(socketId).emit('receivedCall',{answer})
     })
 })
 
