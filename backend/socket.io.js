@@ -49,6 +49,15 @@ io.on('connection', (socket) => {
         const socketId= emailToSocket.get(roomCreator)
         socket.to(socketId).emit('receivedCall',{answer})
     })
+    socket.on('nego:offer',({offer})=>{
+        const socketId=emailToSocket.get(roomJoiner)
+        socket.to(socketId).emit('nego:handleOffer',{offer})
+    })
+    socket.on('nego:answer',({answer})=>{
+        const socketId= emailToSocket.get(roomCreator)
+        socket.to(socketId).emit('nego:handleAnswer',{answer})
+    })
+    
 })
 
 export { io, httpServer, app }

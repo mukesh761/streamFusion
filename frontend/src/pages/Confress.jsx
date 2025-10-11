@@ -20,18 +20,18 @@ import { useState } from 'react';
 	const handleNewUser=useCallback(async ({email})=>{
 		const offer=await createOffer()
 		socket.emit('handleOffer',{offer})
-	},[])
+	},[socket,createOffer])
 
 	const handleIncomingCall=useCallback(async ({offer})=>{
 		const answer= await createAnswer(offer)
 		socket.emit('handleAnswer',{answer})
-	},[])
+	},[socket,createAnswer])
 
 	const handleReceivedCall=useCallback(async({answer})=>{
 		await addAnswer(answer);
-	},[])
+	},[socket,addAnswer])
 
-	const startVideo=async ()=>{
+	const startVideo=useCallback(async ()=>{
 		const localStream=await  navigator.mediaDevices.getUserMedia({audio:true,video:true})
 		setlocalVideo(localStream)
 		if(localVideoRef.current){
@@ -41,7 +41,12 @@ import { useState } from 'react';
 		localStream.getTracks().forEach(track => {
       peer.addTrack(track, localStream);
     });
-	}
+	},[peer])
+
+	useEffect(()=>{
+		console.log('starting the video')
+		startVideo()
+	},[])
 
 	useEffect(()=>{
 		socket.on('newUser',handleNewUser)
@@ -58,17 +63,51 @@ import { useState } from 'react';
 		})
 	},[socket,handleIncomingCall,handleNewUser,handleReceivedCall])
 	
-	const handleTrack=async (event)=>{
+	const handleTrack=useCallback(async (event)=>{
+		console.log('handling tracks')
 		const incomingStreams=event.streams[0]
 		console.log({incomingStreams})
 		if(remoteVideoRef.current){
 			remoteVideoRef.current.srcObject=incomingStreams;
+			console.log(remoteVideoRef.current.srcObject)
 		}
-	}
+	},[])
 
-	useState(()=>{
+	const handleNegotiation=useCallback(async (e)=>{
+		console.log('handling negotiation ')
+		const offer= await createOffer()
+		socket.emit('nego:offer',{offer})
+	},[socket,createOffer])
+
+	const handleNegoOffer=useCallback(async ({offer})=>{
+		const answer=await createAnswer(offer)
+		console.log('creating answer in negotiation')
+		socket.emit('nego:answer',{answer})
+	},[socket,createAnswer])
+	
+	const handleNegoAnswer=useCallback(async ({answer})=>{
+		await addAnswer(answer)
+		console.log('negotiation final')
+	},[socket,addAnswer])
+
+	useEffect(()=>{
 		peer.addEventListener('track',handleTrack)
-	},[startVideo])
+		peer.addEventListener('negotiationneeded', handleNegotiation);
+		return (()=>{
+			peer.removeEventListener('track', handleTrack)
+		peer.removeEventListener('negotiationneeded', handleNegotiation);
+
+		})
+	},[peer,handleTrack,handleNegotiation])
+
+	useEffect(()=>{
+		socket.on('nego:handleOffer',handleNegoOffer)
+		socket.on('nego:handleAnswer',handleNegoAnswer)
+		return (()=>{
+			socket.off('nego:handleOffer',handleNegoOffer)
+		socket.off('nego:handleAnswer',handleNegoAnswer)
+		})
+	},[handleNegotiation])
 
 	return (
 	  <div>
@@ -79,20 +118,20 @@ import { useState } from 'react';
 			muted
 			playsInline
 			autoPlay
-			src={localVideo}
+			
 			/>
 		</div>
 		<div>
-			<h1>local video</h1>
+			<h1>remote video</h1>
 			<video
 			ref={remoteVideoRef}
 			
 			playsInline
 			autoPlay
-			src={localVideo}
+			
 			/>
 		</div>
-		<button onClick={startVideo}>start video</button>
+		
 	  </div>
 	);
   }

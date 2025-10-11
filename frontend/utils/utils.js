@@ -1,1 +1,1 @@
-export const backendUrl = "http://localhost:3000";
+export const backendUrl = "https://streamfusion-g74n.onrender.com";
