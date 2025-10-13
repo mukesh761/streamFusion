@@ -6,7 +6,7 @@ const socketContext=createContext()
 
 const SocketProvider=({children})=>{
    
-    const socket=useMemo(()=>io('https://streamfusion-g74n.onrender.com'),[])
+    const socket=useMemo(()=>io('http://localhost:3000'),[])
     
     useEffect(()=>{
         socket.on('connect',()=>{
