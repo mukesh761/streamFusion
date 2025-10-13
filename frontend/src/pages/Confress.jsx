@@ -110,28 +110,24 @@ import { useState } from 'react';
 	},[handleNegotiation])
 
 	return (
-	  <div>
-		<div>
-			<h1>local video</h1>
+	  <div className='h-screen w-screen flex items-center justify-center '>
+		<div className='h-screen w-[50%] border-l-2 bg-green-500'>
 			<video
+			className='h-full w-full '
 			ref={localVideoRef}
 			muted
 			playsInline
 			autoPlay
-			
 			/>
 		</div>
-		<div>
-			<h1>remote video</h1>
+		<div  className='h-screen w-[50%] bg-red-600 border-l-2'>
 			<video
+			className='h-full w-full'
 			ref={remoteVideoRef}
-			
 			playsInline
 			autoPlay
-			
 			/>
 		</div>
-		
 	  </div>
 	);
   }
