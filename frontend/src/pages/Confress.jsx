@@ -238,6 +238,7 @@ const Confress = () => {
 						className='h-full w-full'
 						ref={remoteVideoRef}
 						playsInline
+						muted
 						autoPlay
 					/>
 					  {snapshot && (
