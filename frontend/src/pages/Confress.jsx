@@ -68,10 +68,12 @@ const Confress = () => {
 		console.log('handling tracks')
 		const incomingStreams = event.streams[0]
 		console.log({ incomingStreams })
-		if (remoteVideoRef.current) {
-			remoteVideoRef.current.srcObject = incomingStreams;
-			console.log(remoteVideoRef.current.srcObject)
-		}
+		setTimeout(() => {
+  if (remoteVideoRef.current) {
+    remoteVideoRef.current.srcObject = incomingStreams;
+    remoteVideoRef.current.play().catch(err => console.log("Autoplay blocked:", err));
+  }
+}, 500);
 	}, [])
 
 	const handleNegotiation = useCallback(async (e) => {
