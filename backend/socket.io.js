@@ -57,7 +57,21 @@ io.on('connection', (socket) => {
         const socketId= emailToSocket.get(roomCreator)
         socket.to(socketId).emit('nego:handleAnswer',{answer})
     })
-    
+   socket.on('hangCall',({roomId})=>{
+    socket.to(roomId).emit('callEnded')
+   })
+   socket.on('cameraOff',({roomId})=>{
+    socket.to(roomId).emit('cameraIsOff')
+   })
+   socket.on('cameraOn',({roomId})=>{
+    socket.to(roomId).emit('cameraIsOn')
+   })
+   socket.on('micOff',({roomId})=>{
+    socket.to(roomId).emit('micIsOff')
+   })
+   socket.on('micOn',({roomId})=>{
+    socket.to(roomId).emit('micIsOn')
+   })
 })
 
 export { io, httpServer, app }

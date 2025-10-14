@@ -13,7 +13,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 let corsOptions = {
-    origin: 'http://localhost:5173', // Replace with your frontend URL
+    origin: 'https://backend-zmgi.onrender.com/', // Replace with your frontend URL
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 };
 app.use(cors(corsOptions));
