@@ -19,6 +19,7 @@ const Confress = () => {
 	const localStreamRef=useRef()
 	const [snapshot,setSnapshot]=useState(null)
 	const [localStream,setlocalStream]=useState()
+	const [connection, setconnection]=useState(false)
 
 	const localVideoRef = useRef()
 	const remoteVideoRef = useRef()
@@ -39,6 +40,7 @@ const Confress = () => {
 
 	const handleReceivedCall = useCallback(async ({ answer }) => {
 		await addAnswer(answer);
+		setconnection(true)
 	}, [socket, addAnswer])
 
 	const startVideo = useCallback(async () => {
@@ -190,7 +192,7 @@ const Confress = () => {
 	}, [socket, handleIncomingCall, handleNewUser, handleReceivedCall])
 
 	useEffect(()=>{
-		if(localStream){
+		if(localStream && connection){
 
 			sendVideo(localStream)
 		}
