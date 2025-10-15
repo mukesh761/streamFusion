@@ -71,7 +71,7 @@ const Confress = () => {
 			remoteVideoRef.current.srcObject = incomingStreams;
 			console.log(remoteVideoRef.current.srcObject)
 		}
-	}, [startVideo,peer,socket])
+	}, [])
 
 	const handleNegotiation = useCallback(async (e) => {
 		console.log('handling negotiation ')
@@ -237,6 +237,7 @@ const Confress = () => {
 						className='h-full w-full'
 						ref={remoteVideoRef}
 						playsInline
+						muted
 						autoPlay
 					/>
 					  {snapshot && (
