@@ -178,11 +178,7 @@ const Confress = () => {
 		socket.on('newUser', handleNewUser)
 		socket.on('incomingCall', handleIncomingCall)
 		socket.on('receivedCall', handleReceivedCall)
-		if(localStream){
-
-			sendVideo(localStream)
-		}
-
+		
 		return (() => {
 			socket.off('newUser', handleNewUser)
 			socket.off('incomingCall', handleIncomingCall)
@@ -191,7 +187,15 @@ const Confress = () => {
 
 
 		})
-	}, [socket, handleIncomingCall, handleNewUser, handleReceivedCall,sendVideo,localStream])
+	}, [socket, handleIncomingCall, handleNewUser, handleReceivedCall])
+
+	useEffect(()=>{
+		if(localStream){
+
+			sendVideo(localStream)
+		}
+
+	},[localStream,sendVideo])
 
 	useEffect(() => {
 		peer.addEventListener('track', handleTrack)
