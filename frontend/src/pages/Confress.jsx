@@ -191,7 +191,7 @@ const Confress = () => {
 
 
 		})
-	}, [socket, handleIncomingCall, handleNewUser, handleReceivedCall,sendVideo])
+	}, [socket, handleIncomingCall, handleNewUser, handleReceivedCall,sendVideo,localStream])
 
 	useEffect(() => {
 		peer.addEventListener('track', handleTrack)
