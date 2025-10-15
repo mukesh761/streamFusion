@@ -178,7 +178,10 @@ const Confress = () => {
 		socket.on('newUser', handleNewUser)
 		socket.on('incomingCall', handleIncomingCall)
 		socket.on('receivedCall', handleReceivedCall)
-		sendVideo(localStream)
+		if(localStream){
+
+			sendVideo(localStream)
+		}
 
 		return (() => {
 			socket.off('newUser', handleNewUser)
