@@ -51,9 +51,6 @@ const Confress = () => {
 
 			localVideoRef.current.srcObject = localStream
 		}
-		localStream.getTracks().forEach(track => {
-			peer.addTrack(track, localStream);
-		});
 	}, [peer])
 
 	useEffect(() => {
@@ -71,7 +68,7 @@ const Confress = () => {
 			remoteVideoRef.current.srcObject = incomingStreams;
 			console.log(remoteVideoRef.current.srcObject)
 		}
-	}, [])
+	}, [peer])
 
 	const handleNegotiation = useCallback(async (e) => {
 		console.log('handling negotiation ')
@@ -106,7 +103,7 @@ const Confress = () => {
 			await peer.close()
 		}
 		if(remoteVideoRef.current){
-			localVideoRef.current.srcObject=null
+			remoteVideoRef.current.srcObject=null
 		}
 		if(localVideoRef.current){
 			localVideoRef.current.srcObject=null
@@ -167,10 +164,18 @@ const Confress = () => {
 		remoteVideoRef.current.muted=false
 		console.log('mic is on')
 	},[socket,micOn])
+
+	const sendVideo=useCallback((localStream)=>{
+		console.log('sending video to other peer')
+		localStream.getTracks().forEach(track => {
+			peer.addTrack(track, localStream);
+		});
+	},[handleReceivedCall,peer])
 	useEffect(() => {
 		socket.on('newUser', handleNewUser)
 		socket.on('incomingCall', handleIncomingCall)
 		socket.on('receivedCall', handleReceivedCall)
+		sendVideo(localStreamRef.current)
 
 		return (() => {
 			socket.off('newUser', handleNewUser)
@@ -180,7 +185,7 @@ const Confress = () => {
 
 
 		})
-	}, [socket, handleIncomingCall, handleNewUser, handleReceivedCall])
+	}, [socket, handleIncomingCall, handleNewUser, handleReceivedCall,sendVideo])
 
 	useEffect(() => {
 		peer.addEventListener('track', handleTrack)
@@ -190,7 +195,7 @@ const Confress = () => {
 			peer.removeEventListener('negotiationneeded', handleNegotiation);
 
 		})
-	}, [peer, handleTrack, handleNegotiation,startVideo])
+	}, [peer, handleTrack, handleNegotiation,startVideo,sendVideo])
 
 	useEffect(() => {
 		socket.on('nego:handleOffer', handleNegoOffer)
