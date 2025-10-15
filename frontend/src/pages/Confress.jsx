@@ -41,8 +41,7 @@ const Confress = () => {
 	}, [socket, addAnswer])
 
 	const startVideo = useCallback(async () => {
-		const audiotrue={audio:true}
-		const audiofalse={audio:false}
+	
 		
 		const localStream = await navigator.mediaDevices.getUserMedia({ audio:true, video: true })
 		localStreamRef.current=localStream
@@ -60,7 +59,7 @@ const Confress = () => {
 	useEffect(() => {
 		console.log('starting the video')
 		startVideo()
-	}, [])
+	}, [peer,socket])
 
 	
 
@@ -72,7 +71,7 @@ const Confress = () => {
 			remoteVideoRef.current.srcObject = incomingStreams;
 			console.log(remoteVideoRef.current.srcObject)
 		}
-	}, [])
+	}, [startVideo,peer,socket])
 
 	const handleNegotiation = useCallback(async (e) => {
 		console.log('handling negotiation ')
@@ -191,7 +190,7 @@ const Confress = () => {
 			peer.removeEventListener('negotiationneeded', handleNegotiation);
 
 		})
-	}, [peer, handleTrack, handleNegotiation])
+	}, [peer, handleTrack, handleNegotiation,startVideo])
 
 	useEffect(() => {
 		socket.on('nego:handleOffer', handleNegoOffer)
