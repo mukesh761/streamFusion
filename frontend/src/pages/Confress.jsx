@@ -197,7 +197,7 @@ const Confress = () => {
 			sendVideo(localStream)
 		}
 
-	},[localStream,sendVideo])
+	},[localStream,sendVideo,connection])
 
 	useEffect(() => {
 		peer.addEventListener('track', handleTrack)
