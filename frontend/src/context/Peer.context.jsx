@@ -4,6 +4,7 @@ import { createContext } from "react";
 const peerContext= createContext()
 
 const PeerProvider=({children})=>{
+    console.log('peer is connected')
      const peer=new RTCPeerConnection({
         iceServers: [
             {
@@ -11,6 +12,7 @@ const PeerProvider=({children})=>{
             }
         ],
     });
+    console.log(peer)
     const createOffer=useCallback(async ()=>{
         const offer=await peer.createOffer()
         console.log('creating offer')
