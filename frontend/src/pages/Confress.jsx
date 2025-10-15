@@ -18,6 +18,7 @@ const Confress = () => {
 	const [micIsOn, setmicIsOn] = useState(true)
 	const localStreamRef=useRef()
 	const [snapshot,setSnapshot]=useState(null)
+	const [localStream,setlocalStream]=useState()
 
 	const localVideoRef = useRef()
 	const remoteVideoRef = useRef()
@@ -51,6 +52,7 @@ const Confress = () => {
 
 			localVideoRef.current.srcObject = localStream
 		}
+		setlocalStream(localStream)
 	}, [peer])
 
 	useEffect(() => {
@@ -167,6 +169,7 @@ const Confress = () => {
 
 	const sendVideo=useCallback((localStream)=>{
 		console.log('sending video to other peer')
+		console.log(localStream)
 		localStream.getTracks().forEach(track => {
 			peer.addTrack(track, localStream);
 		});
@@ -175,7 +178,7 @@ const Confress = () => {
 		socket.on('newUser', handleNewUser)
 		socket.on('incomingCall', handleIncomingCall)
 		socket.on('receivedCall', handleReceivedCall)
-		sendVideo(localStreamRef.current)
+		sendVideo(localStream)
 
 		return (() => {
 			socket.off('newUser', handleNewUser)
