@@ -223,7 +223,7 @@ const Confress = () => {
 			socket.off('nego:handleOffer', handleNegoOffer)
 			socket.off('nego:handleAnswer', handleNegoAnswer)
 		})
-	}, [handleNegotiation])
+	}, [handleNegotiation,handleNegoAnswer,handleNegoAnswer,createOffer,createAnswer])
 
 	useEffect(()=>{
 		socket.on('callEnded',handleCallended)
