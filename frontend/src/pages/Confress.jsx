@@ -77,6 +77,11 @@ const Confress = () => {
 		if (remoteVideoRef.current) {
 			remoteVideoRef.current.srcObject = incomingStreams;
 			console.log(remoteVideoRef.current.srcObject)
+			try {
+            await remoteVideoRef.current.play();
+        } catch (err) {
+            console.error("Auto-play failed, user interaction needed:", err);
+        }
 		}
 	}, [peer])
 
