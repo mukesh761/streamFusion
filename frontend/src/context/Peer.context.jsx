@@ -15,7 +15,7 @@ const PeerProvider=({children})=>{
     console.log(peer)
     const createOffer=useCallback(async ()=>{
         const offer=await peer.createOffer()
-        console.log('creating offer')
+       
         await peer.setLocalDescription(offer)
         return offer
     }
@@ -23,14 +23,14 @@ const PeerProvider=({children})=>{
     const createAnswer=useCallback(async (offer)=>{
         await peer.setRemoteDescription(offer)
         const answer= await peer.createAnswer();
-        console.log('creating answer')
+     
         await peer.setLocalDescription(answer)
         return answer
     },[peer])
 
     const addAnswer=useCallback(async (answer)=>{
         await peer.setRemoteDescription(answer)
-        console.log('setting answer')
+      
     },[peer])
 
     return (

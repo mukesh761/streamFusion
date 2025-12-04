@@ -30,16 +30,20 @@ const Confress = () => {
 
 	const handleNewUser = useCallback(async ({ email }) => {
 		const offer = await createOffer()
+		console.log('offer created',offer)
 		socket.emit('handleOffer', { offer })
 	}, [socket, createOffer])
 
 	const handleIncomingCall = useCallback(async ({ offer }) => {
 		const answer = await createAnswer(offer)
+		console.log('answer created',answer)
 		socket.emit('handleAnswer', { answer })
+		setconnection(true);
 	}, [socket, createAnswer])
 
 	const handleReceivedCall = useCallback(async ({ answer }) => {
 		await addAnswer(answer);
+		console.log('answer added ', answer)
 		setconnection(true)
 	}, [socket, addAnswer])
 
@@ -48,7 +52,8 @@ const Confress = () => {
 		
 		const localStream = await navigator.mediaDevices.getUserMedia({ audio:true, video: true })
 		localStreamRef.current=localStream
-		
+		console.log('playing local stream')
+		sendVideo(localStream)
 		if (localVideoRef.current) {
 			
 
@@ -67,7 +72,8 @@ const Confress = () => {
 	const handleTrack = useCallback(async (event) => {
 		console.log('handling tracks')
 		const incomingStreams = event.streams[0]
-		console.log({ incomingStreams })
+		console.log('incoming stream',incomingStreams)
+		console.log("Video Tracks:", incomingStreams.getVideoTracks());
 		if (remoteVideoRef.current) {
 			remoteVideoRef.current.srcObject = incomingStreams;
 			console.log(remoteVideoRef.current.srcObject)
@@ -77,18 +83,19 @@ const Confress = () => {
 	const handleNegotiation = useCallback(async (e) => {
 		console.log('handling negotiation ')
 		const offer = await createOffer()
+		console.log('creating offer in nego', offer)
 		socket.emit('nego:offer', { offer })
 	}, [socket, createOffer])
 
 	const handleNegoOffer = useCallback(async ({ offer }) => {
 		const answer = await createAnswer(offer)
-		console.log('creating answer in negotiation')
+		console.log('creating answer in negotiation',answer)
 		socket.emit('nego:answer', { answer })
 	}, [socket, createAnswer])
 
 	const handleNegoAnswer = useCallback(async ({ answer }) => {
 		await addAnswer(answer)
-		console.log('negotiation final')
+		console.log('negotiation final',answer)
 	}, [socket, addAnswer])
 
 	const hangCall=useCallback(async ()=>{
@@ -191,13 +198,13 @@ const Confress = () => {
 		})
 	}, [socket, handleIncomingCall, handleNewUser, handleReceivedCall])
 
-	useEffect(()=>{
-		if(localStream && connection){
+	// useEffect(()=>{
+	// 	if(localStream && connection){
 
-			sendVideo(localStream)
-		}
+	// 		sendVideo(localStream)
+	// 	}
 
-	},[localStream,sendVideo,connection])
+	// },[localStream,sendVideo,connection])
 
 	useEffect(() => {
 		peer.addEventListener('track', handleTrack)
@@ -207,7 +214,7 @@ const Confress = () => {
 			peer.removeEventListener('negotiationneeded', handleNegotiation);
 
 		})
-	}, [peer, handleTrack, handleNegotiation,startVideo,sendVideo])
+	}, [peer,sendVideo])
 
 	useEffect(() => {
 		socket.on('nego:handleOffer', handleNegoOffer)
