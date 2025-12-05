@@ -38,7 +38,11 @@ const Confress = () => {
 		const answer = await createAnswer(offer)
 		console.log('answer created',answer)
 		socket.emit('handleAnswer', { answer })
-		sendVideo(localStream)
+		if(localStream){
+
+			sendVideo(localStream)
+		}
+
 		setconnection(true);
 	}, [socket, createAnswer])
 
@@ -46,7 +50,10 @@ const Confress = () => {
 		await addAnswer(answer);
 		console.log('answer added ', answer)
 		setconnection(true)
-		sendVideo(localStream)
+		if(localStream){
+
+			sendVideo(localStream)
+		}
 
 	}, [socket, addAnswer])
 
@@ -190,7 +197,7 @@ const Confress = () => {
 		localStream.getTracks().forEach(track => {
 			peer.addTrack(track, localStream);
 		});
-	},[handleReceivedCall,peer])
+	},[handleReceivedCall,peer,localStream])
 	useEffect(() => {
 		socket.on('newUser', handleNewUser)
 		socket.on('incomingCall', handleIncomingCall)
