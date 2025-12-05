@@ -38,11 +38,6 @@ const Confress = () => {
 		const answer = await createAnswer(offer)
 		console.log('answer created',answer)
 		socket.emit('handleAnswer', { answer })
-		if(localStream){
-
-			sendVideo(localStream)
-		}
-
 		setconnection(true);
 	}, [socket, createAnswer])
 
@@ -50,11 +45,6 @@ const Confress = () => {
 		await addAnswer(answer);
 		console.log('answer added ', answer)
 		setconnection(true)
-		if(localStream){
-
-			sendVideo(localStream)
-		}
-
 	}, [socket, addAnswer])
 
 	const startVideo = useCallback(async () => {
@@ -213,13 +203,13 @@ const Confress = () => {
 		})
 	}, [socket, handleIncomingCall, handleNewUser, handleReceivedCall])
 
-	// useEffect(()=>{
-	// 	if(localStream && connection){
+	useEffect(()=>{
+		if(localStream && connection){
 
-	// 		sendVideo(localStream)
-	// 	}
+			sendVideo(localStream)
+		}
 
-	// },[localStream,sendVideo,connection])
+	},[localStream,sendVideo,connection])
 
 	useEffect(() => {
 		peer.addEventListener('track', handleTrack)
