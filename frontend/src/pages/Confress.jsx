@@ -38,6 +38,7 @@ const Confress = () => {
 		const answer = await createAnswer(offer)
 		console.log('answer created',answer)
 		socket.emit('handleAnswer', { answer })
+		sendVideo(localStream)
 		setconnection(true);
 	}, [socket, createAnswer])
 
@@ -45,6 +46,8 @@ const Confress = () => {
 		await addAnswer(answer);
 		console.log('answer added ', answer)
 		setconnection(true)
+		sendVideo(localStream)
+
 	}, [socket, addAnswer])
 
 	const startVideo = useCallback(async () => {
@@ -53,7 +56,7 @@ const Confress = () => {
 		const localStream = await navigator.mediaDevices.getUserMedia({ audio:true, video: true })
 		localStreamRef.current=localStream
 		console.log('playing local stream')
-		sendVideo(localStream)
+		
 		if (localVideoRef.current) {
 			
 
