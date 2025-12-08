@@ -164,7 +164,7 @@ const Confress = () => {
 					autoPlay
 				></video>
 			</div>
-			<button onClick={makeCall}>makecall</button>
+			
 		</div>
 	)
 }
