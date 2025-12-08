@@ -13,9 +13,9 @@ const Confress = () => {
 	console.log('socket. io ', socket.connected)
 	const candidateQueue = useRef([]);
 
-	const makeCall = () => {
+	useEffect(()=>{
 		openCamera()
-	}
+	},[peer])
 
 	const openCamera = useCallback(async () => {
 		try {
@@ -54,7 +54,7 @@ const Confress = () => {
 	}, [createAnswer, peer, handleNegotiation])
 
 	const handleIncomingOffer = useCallback(async ({ offer, roomId }) => {
-		openCamera()
+		
 		const answer = await createAnswer(offer)
 		console.log('creating answer')
 		socket.emit('handleAnswer', { answer, roomId })
