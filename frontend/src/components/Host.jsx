@@ -23,6 +23,7 @@ const Host = ({ setshowhost }) => {
     const handleCreateRoom = (e) => {
         e.preventDefault()
         const data = { roomId, password }
+        console.log(socket)
         socket.emit('createRoom', { data, user: JSON.parse(localStorage.getItem('user')) })
     }
 

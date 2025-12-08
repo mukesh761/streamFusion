@@ -16,11 +16,13 @@ const emailToSocket = new Map()
 const roomToPassword = new Map()
 let roomCreator;
 let roomJoiner;
-
+let roomId
 io.on('connection', (socket) => {
+    
     console.log('a new socket joined ', socket.id)
     socket.on('createRoom', ({ data, user }) => {
         socket.join(data.roomId);
+        roomId=roomId
         console.log(`${user.email} created ${data.roomId}`)
         roomCreator=user.email
         socketToEmail.set(socket.id, user.email)
@@ -40,38 +42,18 @@ io.on('connection', (socket) => {
             socket.to(data.roomId).emit('newUser',{email:user.email})
         }
     })
-    socket.on('handleOffer',({offer})=>{
-        const socketId=emailToSocket.get(roomJoiner)
-        console.log({socketId})
-        socket.to(socketId).emit('incomingCall',{offer})
+    socket.on('createOffer',({offer,roomId})=>{
+        console.log('inside create offer event ')
+        socket.to(roomId).emit('handleOffer',{offer,roomId})
     })
-    socket.on('handleAnswer',({answer})=>{
-        const socketId= emailToSocket.get(roomCreator)
-        socket.to(socketId).emit('receivedCall',{answer})
+    socket.on('handleAnswer',({answer,roomId})=>{
+        console.log('handling answer')
+        socket.to(roomId).emit('handleincominganswer',{answer,roomId})
     })
-    socket.on('nego:offer',({offer})=>{
-        const socketId=emailToSocket.get(roomJoiner)
-        socket.to(socketId).emit('nego:handleOffer',{offer})
+    socket.on("ice:candidate",({candidate,roomId})=>{
+        console.log('hancling ice:candidate')
+        socket.to(roomId).emit('ice:candidate',{candidate})
     })
-    socket.on('nego:answer',({answer})=>{
-        const socketId= emailToSocket.get(roomCreator)
-        socket.to(socketId).emit('nego:handleAnswer',{answer})
-    })
-   socket.on('hangCall',({roomId})=>{
-    socket.to(roomId).emit('callEnded')
-   })
-   socket.on('cameraOff',({roomId})=>{
-    socket.to(roomId).emit('cameraIsOff')
-   })
-   socket.on('cameraOn',({roomId})=>{
-    socket.to(roomId).emit('cameraIsOn')
-   })
-   socket.on('micOff',({roomId})=>{
-    socket.to(roomId).emit('micIsOff')
-   })
-   socket.on('micOn',({roomId})=>{
-    socket.to(roomId).emit('micIsOn')
-   })
 })
 
 export { io, httpServer, app }
