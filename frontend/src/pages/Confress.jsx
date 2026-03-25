@@ -1,7 +1,10 @@
-import React, { useCallback, useContext, useEffect, useRef } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { peerContext } from '../context/Peer.context'
 import { socketContext } from '../context/Socket.context'
-import { useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { BsMicMuteFill } from "react-icons/bs";
+import { ImPhoneHangUp } from "react-icons/im";
+import { FaVideoSlash } from "react-icons/fa6";
 
 const Confress = () => {
 	const localVideoRef = useRef()
@@ -12,6 +15,8 @@ const Confress = () => {
 	console.log(roomId)
 	console.log('socket. io ', socket.connected)
 	const candidateQueue = useRef([]);
+	const [muted, setmuted] = useState(false)
+	const navigate=useNavigate()
 
 	useEffect(()=>{
 		openCamera()
@@ -146,25 +151,77 @@ const Confress = () => {
 		})
 	}, [ peer, handleTrack])
 
+	const muteCall=()=>{
+		console.log('this is indside mute call')
+		socket.emit('mute-call')
+	}
+
+	const handleMuteCall=useCallback(()=>{
+		setmuted(true)
+		console.log('call is muted now')
+	},[])
+
+	useEffect(() => {
+	  socket.on('mute-call',handleMuteCall)
+
+	
+	  return () => {
+		socket.off('mute-call',handleMuteCall)
+	  }
+	}, [peer,socket,muteCall])
+	
+	const hangUp=useCallback(async ()=>{
+		
+		peer.close()
+		
+		socket.emit('hang-up')
+		navigate('/')
+	},[])
+
+	const handleHangUp=()=>{
+		console.log('user hangup the call')
+	}
+	
+	useEffect(() => {
+		socket.on('hang:up',handleHangUp)
+	
+	  return () => {
+		socket.off('hang:up',handleHangUp)
+	  }
+	}, [peer,hangUp,socket])
+	
+
 	return (
-		<div>
-			<div>
-				<h1>local video </h1>
-				<video ref={localVideoRef}
+		<div className='relative'>
+		<div className='h-[90vh] w-full bg-neutral-300'>
+			<div className='h-1/2 w-full '>
+				
+				<video className='h-full w-full' ref={localVideoRef}
 					muted
 					playsInline
 					autoPlay
 				></video>
 			</div>
-			<div>
-				<h1>Remote  video </h1>
+			<div className='h-1/2 w-full '>
+				
 				<video ref={remoteVideoRef}
-					muted
+					muted={muted?true:false}
 					playsInline
 					autoPlay
 				></video>
 			</div>
-			
+			<div className='h-20 w-full flex items-center justify-evenly'>
+				<div className='h-12 w-20 flex items-center justify-center rounded-3xl bg-gray-400' onClick={muteCall} >
+					<BsMicMuteFill className='h-10 w-10 ' />
+				</div>
+				<div className='h-12 w-28 flex items-center justify-center rounded-3xl bg-red-700' onClick={hangUp}>
+					<ImPhoneHangUp  className='h-10 w-10' />
+				</div>
+				<div className='h-12 w-20 flex items-center justify-center rounded-3xl bg-gray-400'>
+					<FaVideoSlash   className='h-10 w-10'/>
+				</div>
+			</div>
+			</div>
 		</div>
 	)
 }

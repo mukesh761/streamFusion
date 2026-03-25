@@ -18,7 +18,7 @@ let roomCreator;
 let roomJoiner;
 let roomId
 io.on('connection', (socket) => {
-    
+    //setting up a call
     console.log('a new socket joined ', socket.id)
     socket.on('createRoom', ({ data, user }) => {
         socket.join(data.roomId);
@@ -53,6 +53,17 @@ io.on('connection', (socket) => {
     socket.on("ice:candidate",({candidate,roomId})=>{
         console.log('hancling ice:candidate')
         socket.to(roomId).emit('ice:candidate',{candidate})
+    })
+
+
+    // adding fuctions 
+    socket.on('mute-call',()=>{
+        console.log('handling mute call')
+        socket.emit('mute-call')
+    })
+    socket.on('hang-up',()=>{
+        console.log('hanging call');
+        socket.emit('hang:up')
     })
 })
 
